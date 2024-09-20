@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "make_space_for_notes_on_pdf"
+version = "0.1.0"
+description = ""
+authors = ["Tom Stadelmann <tom-010@web.de>"]
+readme = "README.md"
+
+
+[tool.poetry.dependencies]
+python = "^3.11"
+click = "^8.1.7"
+tqdm = "^4.66.5"
+pypdf2 = "^3.0.1"
+pdfcropmargins = "^2.1.4"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
