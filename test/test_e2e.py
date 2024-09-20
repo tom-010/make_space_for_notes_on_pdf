@@ -39,7 +39,6 @@ def test_e2e():
     actual = []
 
     # Loop through each page and extract the required info
-    page_info = []
     for i in range(num_pages):
         page = reader.pages[i]
         
@@ -62,3 +61,7 @@ def test_e2e():
 
     for i, (exp, act) in enumerate(zip(expected, actual)):
         assert exp == act, f'Page {i + 1} does not match'
+
+    # TIPP: I you change the code an you have to fix this test,
+    #       visually inspect the result and if it looks good to you, print 
+    #       the actual-list and paste it into the expected-list above.
