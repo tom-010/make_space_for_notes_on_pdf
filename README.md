@@ -46,3 +46,15 @@ If you want to know more, check
 ```python3
 python3 cli.py --help
 ```
+
+## More information
+
+If you nee to know details, check out `cli.py`. It is pretty straightforward.
+
+
+## Thank you
+
+This is just a wrapper around 
+
+* pdfcropmargins  
+* PyPDF2
