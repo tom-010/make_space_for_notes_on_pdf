@@ -13,7 +13,7 @@ This tool adds margins left and right of the text and adds
 blank pages between each page. With this I have enough space
 for my thoughts and ideas and space to learn.
 
-FEATURES:
+# Features
 
 * Add margins left and right of the document
 * Add a blank page after each page in the PDF
