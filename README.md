@@ -18,6 +18,14 @@ for my thoughts and ideas and space to learn.
 * Add margins left and right of the document
 * Add a blank page after each page in the PDF
 
+Before:
+
+![before](docs/before.png)
+
+After:
+
+![after](docs/after.png)
+
 
 ## Usage
 
