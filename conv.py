@@ -1,33 +1,52 @@
-import pikepdf
-from PyPDF2 import PdfReader, PdfWriter
+from PyPDF2 import PdfReader, PdfWriter, Transformation, PageObject
 from PyPDF2.generic import RectangleObject
+from tqdm import tqdm
 
-def add_margins_to_pdf(input_pdf_path, output_pdf_path, margin_size=20):
-    # Load the original PDF using pikepdf to access page sizes
-    with pikepdf.open(input_pdf_path) as pdf:
-        new_pdf_writer = PdfWriter()
-        
-        for page_num, page in enumerate(pdf.pages):
-            # Get the original page dimensions
-            original_width = page.MediaBox[2]
-            original_height = page.MediaBox[3]
-            
-            # Define new dimensions with added margins
-            new_width = original_width + 2 * margin_size
-            new_height = original_height + 2 * margin_size
-            
-            # Adjust page dimensions using PyPDF2
-            new_page = new_pdf_writer.add_blank_page(width=new_width, height=new_height)
-            
-            # Set a translation matrix to move the original content by margin size
-            new_page.merge_page(
-                PdfReader(input_pdf_path).pages[page_num],
-                transformation_matrix=[1, 0, 0, 1, margin_size, margin_size]
-            )
-        
-        # Save to output file
-        with open(output_pdf_path, "wb") as output_pdf_file:
-            new_pdf_writer.write(output_pdf_file)
 
-# Example usage:
-add_margins_to_pdf("input.pdf", "output_with_margins.pdf", margin_size=50)
+margin_left = 0
+margin_right = 0
+margin_bottom = 0
+margin_top = 400
+
+# Open the input PDF file
+with open("input.pdf", "rb") as f:
+    pdf = PdfReader(f)
+    number_of_pages = len(pdf.pages)
+
+    writer = PdfWriter()
+    margin = 100
+    print(f"Margin: {margin}")
+
+    for i in tqdm(range(number_of_pages)):
+        page = pdf.pages[i]
+
+        original_width = float(page.mediabox.width)
+        original_height = float(page.mediabox.height)
+        width = original_width + margin_left + margin_right
+        height = original_height + margin_top + margin_bottom
+
+        # page.cropbox = RectangleObject((0, 0, width + 1000, height + 10000))
+        # new_page = writer.add_blank_page(width, height)
+
+        # Merge the original page onto the new page with margins applied
+        # new_page.merge_page(page)
+
+        # Calculate the translation to account for margins
+        # page.mediabox.lower_left = (margin, margin)
+        # page.mediabox.upper_right = (width - margin, height - margin)
+
+        # page.add_transformation(
+        #     Transformation().scale(0.5, 0.5)  # .translate(tx=margin, ty=margin)
+        # )
+        #
+
+        bg = PageObject.create_blank_page(width=width, height=height)
+
+        bg.merge_page(page)
+        bg.add_transformation(Transformation().translate(tx=margin_left, ty=margin_top))
+
+        writer.add_page(bg)
+
+    # Write the output to a new PDF file
+    with open("output.pdf", "wb") as output_file:
+        writer.write(output_file)
