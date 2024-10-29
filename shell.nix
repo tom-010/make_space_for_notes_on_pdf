@@ -8,6 +8,7 @@
 pkgs.mkShell {
   buildInputs = with pkgs; [
     gcc
+    python3
     zsh
     tmux
     vscode
@@ -25,7 +26,9 @@ pkgs.mkShell {
     # Setup the environment =========================================
     
     ## gcc, c and c++ libraries
-    export LD_LIBRARY_PATH=${pkgs.gcc}/lib:${pkgs.gcc}/lib64:${pkgs.stdenv.cc.cc.lib}/lib:${pkgs.zlib}/lib:$LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH="${pkgs.gcc}/lib:${pkgs.gcc}/lib64:${pkgs.zlib}/lib:$LD_LIBRARY_PATH"
+
+
 
     # Initialize tmux =============================================== 
 
@@ -37,12 +40,7 @@ pkgs.mkShell {
     if [ -z "$TMUX" ]; then
 
       # Window: Code editing
-      tmux new-session -d -s "$SESSION_NAME" -n 'code'
-      tmux send-keys -t "$SESSION_NAME:code" 'code .' C-m
-
-      # Attach to code editing
-      tmux select-window -t "$SESSION_NAME:code"
-      tmux attach-session -t "$SESSION_NAME"
+      tmux -L "$SESSION_NAME" 
     fi
 
     exec ${pkgs.zsh}/bin/zsh

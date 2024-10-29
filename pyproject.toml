@@ -11,12 +11,18 @@ python = "^3.11"
 click = "^8.1.7"
 tqdm = "^4.66.5"
 pypdf2 = "^3.0.1"
-pdfcropmargins = "^2.1.4"
+pikepdf = "^9.4.0"
 
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
+ipykernel = "^6.29.5"
+notebook = "^7.2.2"
+jupyter = "^1.1.1"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+make-space-for-notes = "make_space_for_notes_on_pdf.cli:main"

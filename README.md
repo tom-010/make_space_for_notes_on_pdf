@@ -57,15 +57,23 @@ python3 cli.py --help
 
 ## More information
 
-If you nee to know details, check out `cli.py`. It is pretty straightforward.
+If you nee to know details, check out `make_space_for_notes_on_pdf/cli.py`. It is pretty straightforward.
 
 ## Limitations and next Steps
 
-- Detect if 2 columns and be smart where to add margins (1 column, only right margin)
 - Output-directory, not only suffix for output-files 
 - FastAPI server in Dockerfile to make installation easy (with Gradio UI)
 - Make it intallable (as python-package)
 - Add nix-package
+- Detect if 2 columns and be smart where to add margins (1 column, only right margin)
+- Add background, like raster, dots, etc.
+
+## Next steps
+
+- Make it installable
+- Push to pypi
+- Set into metadata that margins were added
+- One or two columns?
 
 ## Thank you
 
