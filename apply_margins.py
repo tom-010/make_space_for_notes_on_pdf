@@ -1,5 +1,4 @@
 from PyPDF2 import PdfReader, PdfWriter, Transformation, PageObject
-from PyPDF2.generic import RectangleObject
 from tqdm import tqdm
 from pathlib import Path
 import math
