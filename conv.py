@@ -1,52 +1,76 @@
 from PyPDF2 import PdfReader, PdfWriter, Transformation, PageObject
 from PyPDF2.generic import RectangleObject
 from tqdm import tqdm
+from pathlib import Path
+import math
 
 
-margin_left = 0
-margin_right = 0
-margin_bottom = 0
-margin_top = 400
+def add_margins(
+    input_path: str | Path,
+    output_path: str | Path = None,
+    margin_left=0,
+    margin_right=0,
+    margin_top=0,
+    margin_bottom=0,
+    force_relative=False,
+):
+    if not output_path:
+        output_path = input_path
 
-# Open the input PDF file
-with open("input.pdf", "rb") as f:
-    pdf = PdfReader(f)
-    number_of_pages = len(pdf.pages)
+    input_path = Path(input_path)
+    output_path = Path(output_path)
 
-    writer = PdfWriter()
-    margin = 100
-    print(f"Margin: {margin}")
+    assert margin_right >= 0, "right margin can not be negative"
+    assert margin_left >= 0, "left margin can not be negative"
+    assert margin_top >= 0, "top margin can not be negative"
+    assert margin_bottom >= 0, "bottom margin can not be negative"
 
-    for i in tqdm(range(number_of_pages)):
-        page = pdf.pages[i]
+    with input_path.open("rb") as f:
+        pdf = PdfReader(f)
+        writer = PdfWriter()
 
-        original_width = float(page.mediabox.width)
-        original_height = float(page.mediabox.height)
-        width = original_width + margin_left + margin_right
-        height = original_height + margin_top + margin_bottom
+        for page in tqdm(pdf.pages):
+            # calculate the target size
+            original_width = float(page.mediabox.width)
+            original_height = float(page.mediabox.height)
 
-        # page.cropbox = RectangleObject((0, 0, width + 1000, height + 10000))
-        # new_page = writer.add_blank_page(width, height)
+            if force_relative:
+                margin_right = math.ceil(original_width * margin_right)
+                margin_left = math.ceil(original_width * margin_left)
+                margin_top = math.ceil(original_height * margin_top)
+                margin_bottom = math.ceil(original_height * margin_bottom)
+            else:
+                if margin_right < 1:
+                    margin_right = math.ceil(original_width * margin_right)
+                if margin_left < 1:
+                    margin_left = math.ceil(original_width * margin_left)
+                if margin_top < 1:
+                    margin_top = math.ceil(original_height * margin_top)
+                if margin_bottom < 1:
+                    margin_bottom = math.ceil(original_height * margin_bottom)
 
-        # Merge the original page onto the new page with margins applied
-        # new_page.merge_page(page)
+            width = original_width + margin_left + margin_right
+            height = original_height + margin_top + margin_bottom
 
-        # Calculate the translation to account for margins
-        # page.mediabox.lower_left = (margin, margin)
-        # page.mediabox.upper_right = (width - margin, height - margin)
+            # create a page with the desired measures and place the original page on top
+            bg = PageObject.create_blank_page(width=width, height=height)
+            bg.merge_page(page)
+            bg.add_transformation(
+                Transformation().translate(tx=margin_left, ty=margin_bottom)
+            )
 
-        # page.add_transformation(
-        #     Transformation().scale(0.5, 0.5)  # .translate(tx=margin, ty=margin)
-        # )
-        #
+            writer.add_page(bg)
 
-        bg = PageObject.create_blank_page(width=width, height=height)
+        # Write the output to a new PDF file
+        with output_path.open("wb") as output_file:
+            writer.write(output_file)
 
-        bg.merge_page(page)
-        bg.add_transformation(Transformation().translate(tx=margin_left, ty=margin_top))
 
-        writer.add_page(bg)
-
-    # Write the output to a new PDF file
-    with open("output.pdf", "wb") as output_file:
-        writer.write(output_file)
+add_margins(
+    "input.pdf",
+    "output.pdf",
+    margin_left=0.0,
+    margin_right=0.3,
+    margin_top=0,
+    margin_bottom=0.5,
+)
